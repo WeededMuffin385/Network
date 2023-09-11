@@ -4,7 +4,6 @@ import Sandcore.Network.Socket.Async;
 import Sandcore.Network.Socket;
 import Sandcore.Network.Connector;
 import Sandcore.Network.Executor;
-import Sandcore.Network;
 
 using namespace Sandcore;
 
@@ -16,7 +15,7 @@ void example1() { // Test sockets for client-server connection
 	std::thread b([&client]() {
 		client.connect("127.0.0.1", 13);
 		std::println("connected");
-		});
+	});
 
 	std::thread a([&connector, &server]() {
 		server = std::move(connector.accept());
@@ -52,22 +51,30 @@ void example3() { // Async send/recv example
 	Socket server;
 	Connector connector(13);
 
-	std::string messageForSend = "Hello server!";
-	std::string messageForRecv(6, 0);
+	std::string messageForSend;
+	std::string messageForRecv(5, 0);
 
 	std::thread b([&client, &messageForSend]() {
 		client.connect("127.0.0.1", 13);
-		asyncSend(client, messageForSend, [&messageForSend] {messageForSend = ""; });
+		while (true) {
+			std::cin >> messageForSend;
+			client.send(messageForSend);
+		}
+
+		// asyncSend(client, messageForSend, [&messageForSend] {messageForSend = ""; });
 		std::println("connected");
 	});
 
 	std::thread a([&connector, &server, &messageForRecv]() {
 		server = std::move(connector.accept());
-		asyncRecv(server, messageForRecv, [&messageForRecv] {std::println("{}", messageForRecv); });
+		asyncRecv(server, messageForRecv, [&messageForRecv] {std::println("MESSAGE: {}", messageForRecv); });
 	});
 
 	if (a.joinable()) a.join();
 	if (b.joinable()) b.join();
+
+
+	while (true);
 }
 
 int main() {

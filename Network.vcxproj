@@ -137,7 +137,6 @@
   <ItemGroup>
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Network\Sandcore.Network.Connector.ixx" />
-    <ClCompile Include="Source\Network\Sandcore.Network.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.Socket.Async.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.Socket.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.Executor.ixx" />

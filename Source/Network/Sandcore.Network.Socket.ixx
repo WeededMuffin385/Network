@@ -2,36 +2,41 @@ module;
 #include <WS2tcpip.h>
 #include <WinSock2.h>
 #include <Windows.h>
+#pragma comment(lib, "ws2_32.lib")
 export module Sandcore.Network.Socket;
 
 import std;
 
+struct WinsockInit {
+	WinsockInit() : init(WSAStartup(MAKEWORD(2, 2), &data) == 0){
+		if (!init) throw std::exception("Unable to init winsock!");
+	}
+
+	~WinsockInit() {
+		WSACleanup();
+	}
+	WSAData data;
+	bool init = false;
+} winsockInit;
+
 export namespace Sandcore {
+	const bool debug = true;
+
 	class Socket {
 	public:
 		Socket() {
 			socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			if (socket == INVALID_SOCKET) throw std::exception("Socket creation failed!");
 		}
-
 		Socket(SOCKET socket) : socket(socket) {}
+
 
 		Socket(Socket&& right) { std::swap(socket, right.socket); }
 		void operator=(Socket&& right) { std::swap(socket, right.socket); }
 
 		virtual ~Socket() {
-			std::println("Socket killed: {}!", socket);
+			if constexpr (debug) std::println("Socket killed: {}!", socket);
 			close();
-		}
-
-		auto getAddress() {
-			sockaddr_in address;
-			int length;
-			::getsockname(socket, (sockaddr*)(&address), &length);
-
-			std::string result(INET_ADDRSTRLEN, 0);
-			inet_ntop(AF_INET, &address.sin_addr, result.data(), INET_ADDRSTRLEN);
-			return result;
 		}
 
 		void connect(std::string ip, std::uint16_t port) {
@@ -46,7 +51,8 @@ export namespace Sandcore {
 		}
 
 		void close() {
-			::closesocket(socket);
+			auto result = ::closesocket(socket);
+			if (result != 0) throw std::exception("Socket was closed with error");
 		}
 
 		void send(std::string buffer) {
@@ -59,7 +65,7 @@ export namespace Sandcore {
 		}
 
 		void recv(std::string& buffer) {
-			int flags = 0;
+			int flags = MSG_WAITALL;
 			auto result = ::recv(socket, buffer.data(), buffer.length(), flags);
 			if (result == SOCKET_ERROR) {
 				auto error = WSAGetLastError();
@@ -75,6 +81,24 @@ export namespace Sandcore {
 
 			::bind(socket, (sockaddr*)(&name), sizeof(name));
 		}
+
+		bool empty() {
+			fd_set set;
+			FD_ZERO(&set);
+			FD_SET(socket, &set);
+
+			timeval time{ .tv_sec = 0,.tv_usec = 500000 };
+			auto result = ::select(0, &set, nullptr, nullptr, &time);
+
+			FD_ZERO(&set);
+
+			return result == 0;
+		}
+
+		auto get(){
+			return socket;
+		}
+
 	protected:
 		SOCKET socket;
 	};

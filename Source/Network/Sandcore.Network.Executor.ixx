@@ -31,13 +31,20 @@ export namespace Sandcore {
 	private:
 		void work() {
 			while (run) {
-				std::unique_lock lock(mutex);
-				condition.wait(lock, [this]() { return !tasks.empty() || !run; });
-				if (!run && tasks.empty()) return;
+				Task task;
+				{
+					std::unique_lock lock(mutex);
+					condition.wait(lock, [this]() { return !tasks.empty() || !run; });
+					if (!run && tasks.empty()) return;
 
-				auto task = tasks.front();
-				task();
-				tasks.pop();
+					task = tasks.front();
+					tasks.pop();
+				}
+				try {
+					task();
+				} catch (...) {
+					add(task);
+				}
 			}
 		}
 		bool run = true;
