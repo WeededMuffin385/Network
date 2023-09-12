@@ -12,7 +12,7 @@ export namespace Sandcore {
 	void asyncAccept(Connector& connector, Socket& socket, Callback callback, Executor& executor = Sandcore::executor) {
 		executor.add(
 			[&connector, &socket, callback] {
-				socket = std::move(connector.accept());
+				socket = connector.accept();
 				callback();
 			}
 		);

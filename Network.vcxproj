@@ -136,10 +136,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Network\Sandcore.Network.Connection.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.Connector.ixx" />
+    <ClCompile Include="Source\Network\Sandcore.Network.Message.Byte.ixx" />
+    <ClCompile Include="Source\Network\Sandcore.Network.Message.Constructor.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.Socket.Async.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.Socket.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.Executor.ixx" />
+    <ClCompile Include="Source\Network\Sandcore.Network.ThreadSafeQueue.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

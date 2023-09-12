@@ -28,16 +28,39 @@ export namespace Sandcore {
 			socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 			if (socket == INVALID_SOCKET) throw std::exception("Socket creation failed!");
 		}
-		Socket(SOCKET socket) : socket(socket) {}
-
-
-		Socket(Socket&& right) { std::swap(socket, right.socket); }
-		void operator=(Socket&& right) { std::swap(socket, right.socket); }
-
 		virtual ~Socket() {
-			if constexpr (debug) std::println("Socket killed: {}!", socket);
-			close();
+			clean();
 		}
+
+		explicit Socket(SOCKET socket) : socket(socket) {}
+
+		explicit Socket(Socket&& other) {
+			if (&other != this) {
+				socket = other.socket;
+				other.socket = INVALID_SOCKET;
+			}
+		}
+		Socket& operator=(Socket&& other) { 
+			if (&other != this){
+				clean();
+				socket = other.socket;
+				other.socket = INVALID_SOCKET;
+			}
+			return *this;
+		}
+
+		Socket(const Socket& other) = delete;
+		Socket& operator=(const Socket& other) = delete;
+
+		void clean() {
+			if (socket == INVALID_SOCKET) return;
+			if constexpr (debug) std::println("Socket killed: {}!", socket);
+
+
+			auto result = ::closesocket(socket);
+			if (result != 0) throw std::exception("Socket was closed with error");
+		}
+
 
 		void connect(std::string ip, std::uint16_t port) {
 			sockaddr_in address{};
@@ -48,11 +71,6 @@ export namespace Sandcore {
 
 			auto result = ::connect(socket, (sockaddr*)(&address), sizeof(address));
 			if (result == SOCKET_ERROR) throw std::exception("Unable to connect!");
-		}
-
-		void close() {
-			auto result = ::closesocket(socket);
-			if (result != 0) throw std::exception("Socket was closed with error");
 		}
 
 		void send(std::string buffer) {
@@ -100,6 +118,6 @@ export namespace Sandcore {
 		}
 
 	protected:
-		SOCKET socket;
+		SOCKET socket = INVALID_SOCKET;
 	};
 }

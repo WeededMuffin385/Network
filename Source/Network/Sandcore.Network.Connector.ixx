@@ -19,10 +19,6 @@ export namespace Sandcore {
 			std::println("Socket: {} was connector!", socket);
 		}
 
-		void listen(int amount = SOMAXCONN) {
-			::listen(socket, amount);
-		}
-
 		Socket accept() {
 			sockaddr_in address;
 			int length = sizeof(address);
@@ -30,6 +26,10 @@ export namespace Sandcore {
 			auto result = ::accept(socket, (sockaddr*)(&address), &length);
 			if (result == INVALID_SOCKET) throw std::exception("Acception failed!");
 			return Socket(result);
+		}
+	private:
+		void listen() {
+			::listen(socket, SOMAXCONN);
 		}
 	};
 }
