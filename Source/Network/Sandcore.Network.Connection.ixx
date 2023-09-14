@@ -49,7 +49,7 @@ export namespace Sandcore {
 			asyncRecv(
 				socket,
 				header,
-				[this] {recvHelperCallback(); }
+				[this](int bytes) {std::println("Recv: {} bytes!", bytes); recvHelperCallback(); }
 			);
 		}
 
@@ -65,7 +65,7 @@ export namespace Sandcore {
 				asyncSend(
 					socket,
 					messagesSend.front(),
-					[this] {sendHelperCallback(); }
+					[this](int bytes) {std::println("Send: {} bytes!", bytes); sendHelperCallback(); }
 				);
 			} else sendingStopped = true;
 		}

@@ -73,22 +73,24 @@ export namespace Sandcore {
 			if (result == SOCKET_ERROR) throw std::exception("Unable to connect!");
 		}
 
-		void send(std::string buffer) {
+		auto send(std::string buffer) {
 			int flags = 0;
 			auto result = ::send(socket, buffer.data(), buffer.length(), flags);
 			if (result == SOCKET_ERROR) {
 				auto error = WSAGetLastError();
 				throw std::exception("Sending failed!");
 			}
+			return result;
 		}
 
-		void recv(std::string& buffer) {
+		auto recv(std::string& buffer) {
 			int flags = MSG_WAITALL;
 			auto result = ::recv(socket, buffer.data(), buffer.length(), flags);
 			if (result == SOCKET_ERROR) {
 				auto error = WSAGetLastError();
 				throw std::exception("Recieving failed!");
 			}
+			return result;
 		}
 
 		void bind(std::uint16_t port) {
@@ -100,16 +102,11 @@ export namespace Sandcore {
 			::bind(socket, (sockaddr*)(&name), sizeof(name));
 		}
 
+
+
 		bool empty() {
-			fd_set set;
-			FD_ZERO(&set);
-			FD_SET(socket, &set);
-
-			timeval time{ .tv_sec = 0,.tv_usec = 500000 };
-			auto result = ::select(0, &set, nullptr, nullptr, &time);
-
-			FD_ZERO(&set);
-
+			u_long result = -1;
+			if (ioctlsocket(socket, FIONREAD, &result) == SOCKET_ERROR) throw std::exception("Wasn't able to check if recv is empty!");
 			return result == 0;
 		}
 

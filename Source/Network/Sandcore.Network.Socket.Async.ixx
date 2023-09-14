@@ -1,11 +1,13 @@
 export module Sandcore.Network.Socket.Async;
 
 import std;
-import Sandcore.Network.Socket;
 import Sandcore.Network.Executor;
+import Sandcore.Network.Socket;
+
 import Sandcore.Network.Connector;
 
 export namespace Sandcore {
+	using CommunicationCallback = std::function<void(int)>; // void callback(int bytes)
 	using Callback = std::function<void()>;
 	Executor executor;
 
@@ -18,21 +20,19 @@ export namespace Sandcore {
 		);
 	}
 
-	void asyncSend(Socket& socket, std::string& buffer, Callback callback, Executor& executor = Sandcore::executor) {
+	void asyncSend(Socket& socket, std::string& buffer, CommunicationCallback callback, Executor& executor = Sandcore::executor) {
 		executor.add(
 			[&socket, &buffer, callback] {
-				socket.send(buffer);
-				callback();
+				callback(socket.send(buffer));
 			}
 		);
 	}
 
-	void asyncRecv(Socket& socket, std::string& buffer, Callback callback, Executor& executor = Sandcore::executor) {
+	void asyncRecv(Socket& socket, std::string& buffer, CommunicationCallback callback, Executor& executor = Sandcore::executor) {
 		executor.add(
 			[&socket, &buffer, callback] {
 				if (socket.empty()) throw std::exception("Socket is empty!");
-				socket.recv(buffer);
-				callback();
+				callback(socket.recv(buffer));
 			}
 		);
 	}
