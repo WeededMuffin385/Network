@@ -144,6 +144,7 @@
     <ClCompile Include="Source\Network\Sandcore.Network.Socket.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.Executor.ixx" />
     <ClCompile Include="Source\Network\Sandcore.Network.ThreadSafeQueue.ixx" />
+    <ClCompile Include="Source\Network\Sandcore.Network.Winsock.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

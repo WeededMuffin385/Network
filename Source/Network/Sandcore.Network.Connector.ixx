@@ -1,7 +1,5 @@
 module;
-#include <WS2tcpip.h>
-#include <WinSock2.h>
-#include <Windows.h>
+#include "Sandcore.Network.Winsock.hpp"
 export module Sandcore.Network.Connector;
 
 import std;

@@ -42,5 +42,8 @@
     <ClCompile Include="Source\Network\Sandcore.Network.ThreadSafeQueue.ixx">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Network\Sandcore.Network.Winsock.hpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

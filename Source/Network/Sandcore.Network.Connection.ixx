@@ -49,7 +49,10 @@ export namespace Sandcore {
 			asyncRecv(
 				socket,
 				header,
-				[this](int bytes) {std::println("Recv: {} bytes!", bytes); recvHelperCallback(); }
+				[this](int bytes) {
+					std::println("Recv: {} bytes!", bytes);
+					recvHelperCallback();
+				}
 			);
 		}
 
@@ -65,7 +68,10 @@ export namespace Sandcore {
 				asyncSend(
 					socket,
 					messagesSend.front(),
-					[this](int bytes) {std::println("Send: {} bytes!", bytes); sendHelperCallback(); }
+					[this](int bytes) {
+						std::println("Send: {} bytes!", bytes);
+						sendHelperCallback();
+					}
 				);
 			} else sendingStopped = true;
 		}
@@ -74,6 +80,15 @@ export namespace Sandcore {
 			messagesSend.pop();
 			sendHelper();
 		}
+
+		void checkConnection(int bytes) {
+			if (bytes <= 0) {
+				connected = false;
+				std::println("Connection lost!");
+			}
+		}
+
+		bool connected = true;
 
 		bool sendingStopped = true;
 

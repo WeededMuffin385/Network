@@ -1,8 +1,5 @@
 module;
-#include <WS2tcpip.h>
-#include <WinSock2.h>
-#include <Windows.h>
-#pragma comment(lib, "ws2_32.lib")
+#include "Sandcore.Network.Winsock.hpp"
 export module Sandcore.Network.Socket;
 
 import std;
@@ -88,7 +85,7 @@ export namespace Sandcore {
 			auto result = ::recv(socket, buffer.data(), buffer.length(), flags);
 			if (result == SOCKET_ERROR) {
 				auto error = WSAGetLastError();
-				throw std::exception("Recieving failed!");
+				throw std::exception("Receiving failed!");
 			}
 			return result;
 		}
@@ -101,8 +98,6 @@ export namespace Sandcore {
 
 			::bind(socket, (sockaddr*)(&name), sizeof(name));
 		}
-
-
 
 		bool empty() {
 			u_long result = -1;
