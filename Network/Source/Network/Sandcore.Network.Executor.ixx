@@ -2,7 +2,7 @@ export module Sandcore.Network.Executor;
 
 import std;
 
-export namespace Sandcore {
+export namespace Sandcore::Network {
 	class Executor {
 	public:
 		using Task = std::function<void()>;

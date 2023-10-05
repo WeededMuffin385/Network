@@ -5,7 +5,7 @@ import Sandcore.Network.Message.Byte;
 
 using Identification = std::uint32_t;
 
-namespace Sandcore::Message {
+namespace Sandcore::Network::Message {
 	template <typename T>
 	void compileHelper(std::string& message, T& arg) {
 		message += byte(arg);
@@ -35,7 +35,7 @@ namespace Sandcore::Message {
 	}
 }
 
-namespace Sandcore::Message {
+namespace Sandcore::Network::Message {
 	template <typename T>
 	void decompileHelper(std::string& message, T& arg) {
 		arg = unbyte<T>(message.substr(0, sizeof(T)));

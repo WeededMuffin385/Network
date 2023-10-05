@@ -2,7 +2,7 @@ export module Sandcore.Network.Message.Byte;
 
 import std;
 
-export namespace Sandcore {
+export namespace Sandcore::Network {
 	template <typename T>
 	std::string byte(T value) {
 		std::string bytes(sizeof(T), 0);

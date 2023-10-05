@@ -8,7 +8,7 @@ import Sandcore.Network.Socket;
 
 import Sandcore.Network.Message.Byte;
 
-export namespace Sandcore {
+export namespace Sandcore::Network {
 	class Connection {
 	public:
 		explicit Connection(std::string ip, std::uint16_t port) : header(sizeof(LengthHeader), 0) {

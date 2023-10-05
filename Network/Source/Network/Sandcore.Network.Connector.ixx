@@ -5,7 +5,7 @@ export module Sandcore.Network.Connector;
 import std;
 import Sandcore.Network.Socket;
 
-export namespace Sandcore {
+export namespace Sandcore::Network {
 	class Connector : private Socket {
 	public:
 		Connector(std::uint16_t port) {

@@ -5,8 +5,8 @@ import Sandcore.Network.Connection;
 using namespace Sandcore;
 
 int main() {
-	Connector connector(13);
-	Connection b(connector.accept());
+	Network::Connector connector(13);
+	Network::Connection b(connector.accept());
 
 
 	std::println("Hello world");

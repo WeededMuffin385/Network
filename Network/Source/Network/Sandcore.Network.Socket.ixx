@@ -16,7 +16,7 @@ struct WinsockInit {
 	bool init = false;
 } winsockInit;
 
-export namespace Sandcore {
+export namespace Sandcore::Network {
 	const bool debug = true;
 
 	class Socket {

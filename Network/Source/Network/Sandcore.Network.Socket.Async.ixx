@@ -6,12 +6,12 @@ import Sandcore.Network.Socket;
 
 import Sandcore.Network.Connector;
 
-export namespace Sandcore {
+export namespace Sandcore::Network {
 	using CommunicationCallback = std::function<void(int)>; // void callback(int bytes)
 	using Callback = std::function<void()>;
 	Executor executor;
 
-	void asyncAccept(Connector& connector, Socket& socket, Callback callback, Executor& executor = Sandcore::executor) {
+	void asyncAccept(Connector& connector, Socket& socket, Callback callback, Executor& executor = Sandcore::Network::executor) {
 		executor.add(
 			[&connector, &socket, callback] {
 				socket = connector.accept();
@@ -20,7 +20,7 @@ export namespace Sandcore {
 		);
 	}
 
-	void asyncSend(Socket& socket, std::string& buffer, CommunicationCallback callback, Executor& executor = Sandcore::executor) {
+	void asyncSend(Socket& socket, std::string& buffer, CommunicationCallback callback, Executor& executor = Sandcore::Network::executor) {
 		executor.add(
 			[&socket, &buffer, callback] {
 				callback(socket.send(buffer));
@@ -28,7 +28,7 @@ export namespace Sandcore {
 		);
 	}
 
-	void asyncRecv(Socket& socket, std::string& buffer, CommunicationCallback callback, Executor& executor = Sandcore::executor) {
+	void asyncRecv(Socket& socket, std::string& buffer, CommunicationCallback callback, Executor& executor = Sandcore::Network::executor) {
 		executor.add(
 			[&socket, &buffer, callback] {
 				if (socket.empty()) throw std::exception("Socket is empty!");

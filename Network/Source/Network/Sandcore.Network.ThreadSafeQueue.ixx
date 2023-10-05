@@ -2,7 +2,7 @@ export module Sandcore.Network.ThreadSafeQueue;
 
 import std;
 
-export namespace Sandcore {
+export namespace Sandcore::Network {
 	template <typename T>
 	class ThreadSafeQueue {
 	public:
