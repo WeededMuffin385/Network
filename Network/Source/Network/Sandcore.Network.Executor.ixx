@@ -5,7 +5,7 @@ import std;
 export namespace Sandcore::Network {
 	class Executor {
 	public:
-		using Task = std::function<void()>;
+		using Task = std::function<bool()>;
 
 		Executor(std::size_t count = 8) : threads(count) {
 			for (auto& thread : threads) {
@@ -40,11 +40,8 @@ export namespace Sandcore::Network {
 					task = tasks.front();
 					tasks.pop();
 				}
-				try {
-					task();
-				} catch (...) {
-					add(task);
-				}
+
+				if (!task()) add(task);
 			}
 		}
 		bool run = true;

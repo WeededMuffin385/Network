@@ -13,26 +13,29 @@ export namespace Sandcore::Network {
 
 	void asyncAccept(Connector& connector, Socket& socket, Callback callback, Executor& executor = Sandcore::Network::executor) {
 		executor.add(
-			[&connector, &socket, callback] {
+			[&connector, &socket, callback]() -> bool {
 				socket = connector.accept();
 				callback();
+				return true;
 			}
 		);
 	}
 
 	void asyncSend(Socket& socket, std::string& buffer, CommunicationCallback callback, Executor& executor = Sandcore::Network::executor) {
 		executor.add(
-			[&socket, &buffer, callback] {
+			[&socket, &buffer, callback]() -> bool {
 				callback(socket.send(buffer));
+				return true;
 			}
 		);
 	}
 
 	void asyncRecv(Socket& socket, std::string& buffer, CommunicationCallback callback, Executor& executor = Sandcore::Network::executor) {
 		executor.add(
-			[&socket, &buffer, callback] {
-				if (socket.empty()) throw std::exception("Socket is empty!");
+			[&socket, &buffer, callback]() -> bool {
+				if (socket.empty()) return false;
 				callback(socket.recv(buffer));
+				return true;
 			}
 		);
 	}
