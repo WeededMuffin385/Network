@@ -11,6 +11,8 @@ import Sandcore.Network.Message.Byte;
 export namespace Sandcore::Network {
 	class Connection {
 	public:
+		using LengthHeader = std::uint32_t;
+
 		explicit Connection(std::string ip, std::uint16_t port) : header(sizeof(LengthHeader), 0) {
 			socket.connect(ip, port);
 			recvHelper();
@@ -21,8 +23,6 @@ export namespace Sandcore::Network {
 			recvHelper();
 			sendHelper();
 		}
-
-		using LengthHeader = std::uint32_t;
 
 		void send(std::string message) {
 			messagesSend.push(byte<LengthHeader>(message.size()) + message);
@@ -50,7 +50,7 @@ export namespace Sandcore::Network {
 				socket,
 				header,
 				[this](int bytes) {
-					std::println("Recv: {} bytes!", bytes);
+					std::println("Recv: {} head bytes | {} body bytes", bytes, unbyte<LengthHeader>(header));
 					recvHelperCallback();
 				}
 			);
@@ -69,7 +69,7 @@ export namespace Sandcore::Network {
 					socket,
 					messagesSend.front(),
 					[this](int bytes) {
-						std::println("Send: {} bytes!", bytes);
+						std::println("Send: {} total bytes!", bytes);
 						sendHelperCallback();
 					}
 				);

@@ -63,3 +63,9 @@ namespace Sandcore::Network::Message {
 		decompileHelper(message, id, args...);
 	}
 }
+
+export namespace Sandcore::Network::Message {
+	Identification getMessageIdentification(const std::string message) {
+		return *reinterpret_cast<const Identification*>(message.data());
+	}
+}
