@@ -8,13 +8,15 @@ import Sandcore.Network.Socket;
 export namespace Sandcore::Network {
 	class Connector : private Socket {
 	public:
-		Connector(std::uint16_t port) {
-			bind(port);
-			listen();
-		}
+		Connector() { }
 
 		~Connector() {
 			std::println("Socket: {} was connector!", socket);
+		}
+
+		void listen(std::uint16_t port) {
+			bind(port);
+			::listen(socket, SOMAXCONN);
 		}
 
 		Socket accept() {
@@ -24,10 +26,6 @@ export namespace Sandcore::Network {
 			auto result = ::accept(socket, (sockaddr*)(&address), &length);
 			if (result == INVALID_SOCKET) throw std::exception("Acception failed!");
 			return Socket(result);
-		}
-	private:
-		void listen() {
-			::listen(socket, SOMAXCONN);
 		}
 	};
 }

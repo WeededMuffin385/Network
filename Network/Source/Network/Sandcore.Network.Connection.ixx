@@ -13,15 +13,16 @@ export namespace Sandcore::Network {
 	public:
 		using LengthHeader = std::uint32_t;
 
-		explicit Connection(std::string ip, std::uint16_t port) : header(sizeof(LengthHeader), 0) {
-			socket.connect(ip, port);
-			recvHelper();
-			sendHelper();
+		explicit Connection() {
+			launch();
 		}
 
-		explicit Connection(Socket&& other) : header(sizeof(LengthHeader), 0), socket(std::move(other)) {
-			recvHelper();
-			sendHelper();
+		explicit Connection(Socket&& other) : socket(std::move(other)) {
+			launch();
+		}
+
+		void connect(std::string address, std::uint16_t port) {
+			socket.connect(address, port);
 		}
 
 		void send(std::string message) {
@@ -44,13 +45,19 @@ export namespace Sandcore::Network {
 		bool empty() {
 			return messagesRecv.empty();
 		}
+
 	private:
+		void launch() {
+			recvHelper();
+			sendHelper();
+		}
+
 		void recvHelper() {
 			asyncRecv(
 				socket,
 				header,
 				[this](int bytes) {
-					std::println("Recv: {} head bytes | {} body bytes", bytes, unbyte<LengthHeader>(header));
+					std::println("[Connection] Recv: {} head bytes | {} body bytes", bytes, unbyte<LengthHeader>(header));
 					recvHelperCallback();
 				}
 			);
@@ -69,7 +76,7 @@ export namespace Sandcore::Network {
 					socket,
 					messagesSend.front(),
 					[this](int bytes) {
-						std::println("Send: {} total bytes!", bytes);
+						std::println("[Connection] Send: {} total bytes!", bytes);
 						sendHelperCallback();
 					}
 				);
@@ -89,10 +96,9 @@ export namespace Sandcore::Network {
 		}
 
 		bool connected = true;
-
 		bool sendingStopped = true;
 
-		std::string header;
+		std::string header = std::string(sizeof(LengthHeader), 0);
 
 		ThreadSafeQueue<std::string> messagesRecv;
 		ThreadSafeQueue<std::string> messagesSend;

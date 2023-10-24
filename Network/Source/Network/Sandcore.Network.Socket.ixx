@@ -21,14 +21,7 @@ export namespace Sandcore::Network {
 
 	class Socket {
 	public:
-		Socket() {
-			socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-			if (socket == INVALID_SOCKET) throw std::exception("Socket creation failed!");
-		}
-		virtual ~Socket() {
-			clean();
-		}
-
+		explicit Socket() { create(); }
 		explicit Socket(SOCKET socket) : socket(socket) {}
 
 		explicit Socket(Socket&& other) {
@@ -37,6 +30,7 @@ export namespace Sandcore::Network {
 				other.socket = INVALID_SOCKET;
 			}
 		}
+
 		Socket& operator=(Socket&& other) { 
 			if (&other != this){
 				clean();
@@ -48,6 +42,10 @@ export namespace Sandcore::Network {
 
 		Socket(const Socket& other) = delete;
 		Socket& operator=(const Socket& other) = delete;
+
+		virtual ~Socket() {
+			clean();
+		}
 
 		void clean() {
 			if (socket == INVALID_SOCKET) return;
@@ -110,6 +108,11 @@ export namespace Sandcore::Network {
 		}
 
 	protected:
+		void create() {
+			socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			if (socket == INVALID_SOCKET) throw std::exception("Socket creation failed!");
+		}
+
 		SOCKET socket = INVALID_SOCKET;
 	};
 }
